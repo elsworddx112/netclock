@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <title>類比時鐘 (含數字)</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #222;
+    }
+    .clock {
+      width: 300px;
+      height: 300px;
+      border: 10px solid #fff;
+      border-radius: 50%;
+      position: relative;
+    }
+    .hand {
+      width: 50%;
+      height: 2px;
+      background: #fff;
+      position: absolute;
+      top: 50%;
+      transform-origin: 100%;
+      transform: rotate(90deg);
+      transition: transform 0.5s ease-in-out;
+    }
+    .hour {
+      height: 4px;
+      background: #f39c12;
+    }
+    .minute {
+      background: #3498db;
+    }
+    .second {
+      background: #e74c3c;
+    }
+    .center {
+      width: 12px;
+      height: 12px;
+      background: #fff;
+      border-radius: 50%;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .number {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      text-align: center;
+      line-height: 30px;
+      color: #fff;
+      font-size: 20px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="clock" id="clock">
+    <div class="hand hour" id="hour"></div>
+    <div class="hand minute" id="minute"></div>
+    <div class="hand second" id="second"></div>
+    <div class="center"></div>
+  </div>
+
+  <script>
+    // 加上數字刻度
+    const clock = document.getElementById('clock');
+    for (let i = 1; i <= 12; i++) {
+      const number = document.createElement('div');
+      number.className = 'number';
+      number.textContent = i;
+
+      const angle = (i - 3) * 30; // 12點在上方，需偏移
+      const radius = 130; // 半徑 (鐘面大小的一半減去邊框)
+      const x = radius * Math.cos(angle * Math.PI / 180);
+      const y = radius * Math.sin(angle * Math.PI / 180);
+
+      number.style.left = `${150 + x - 15}px`; // 150 = 鐘面中心
+      number.style.top = `${150 + y - 15}px`;  // 減去字體寬高一半
+      clock.appendChild(number);
+    }
+
+    function updateClock() {
+      const now = new Date();
+      const seconds = now.getSeconds();
+      const minutes = now.getMinutes();
+      const hours = now.getHours();
+
+      const secondDeg = seconds * 6;
+      const minuteDeg = minutes * 6 + seconds * 0.1;
+      const hourDeg = (hours % 12) * 30 + minutes * 0.5;
+
+      document.getElementById('second').style.transform = `rotate(${secondDeg}deg)`;
+      document.getElementById('minute').style.transform = `rotate(${minuteDeg}deg)`;
+      document.getElementById('hour').style.transform = `rotate(${hourDeg}deg)`;
+    }
+
+    setInterval(updateClock, 1000);
+    updateClock();
+  </script>
+</body>
+</html>
